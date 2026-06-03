@@ -1,100 +1,67 @@
-import { articles } from "../models/data";
+import { articles } from "../models/data.js";
 
-app.get('/users', (req, res) => {
-  res.status(200).json(users);
-});
-
-app.get('/users/:id', (req, res) => {
- const id = parseInt(req.params.id);
- const user = users.find(user => user.id === id);
- if(!user){
-  return res.status(404).json({
-    error: "user not found"
-  });
- }
- res.status(200).json(user);
-})
-
-app.post('/users', (req, res) => {
-const {title, content, journalistId, categoryId} = req.body;
-if(!title || !content || !journalistId ||  !categoryId){
-  return res.status(400).json({
-     error:"user not found"
-  });
-}app.put('/user/:id',(req, res) => {
-const id =  parseInt(req.params.id);
-const user = user.find(user => user.id === id );
-if(!user){
-  return res.status(404).json({
-    error: "user not found"
-  });
+export const getAllArticle = (req, res) => {
+  res.status(200).json(articles);
 }
-if(name){
-  user.name = name;
-}
-if(email){
-  user.email = email;
-}
-return res.status(200).json(users);
-});
-
-app.delete('/user/:id', (req, res) => {
+export const getArticleById = (req, res) => {
   const id = parseInt(req.params.id);
-  const user = user.find(user =>user.id === id);
-  if(!user){
-  return res.status(404).json({
-    error: "user not found"
-  });
+  const article = articles.find(a => a.id === id);
+  if(!article){
+    return res.status(404).json({
+      error: "cant find the article"
+    });
+  }
+  res.status(200).json(article);
 }
-if(name){
-  user.name = name;
-}
-if(email){
-  user.email = email;
-}
-return res.status(204).json(users);
 
-})
-const newUser = {
-  id : users.lenght > 0 
-  ? users[users.length - 1].id + 1 : 1, name,email
+export const createArticle = (req, res) => {
+  const {title, content, journalistId, categoryId} = req.body;
+  if(!title || !content || !journalistId || !categoryId){
+    return res.status(400).json({
+      error:"title, content, journalistId and categoryId are required"
+    });
+  }
+  const newArticle = {
+    id : articles.length > 0 ? articles[articles.length - 1].id + 1 : 1, title,content,journalistId,categoryId
+  };
+  articles.push(newArticle);
+  return res.status(201).json(newArticle);
 }
-users.push(newUser);
-return res.status(201).json(users)
-});
 
-app.put('/user/:id',(req, res) => {
-const id =  parseInt(req.params.id);
-const user = user.find(user => user.id === id );
-if(!user){
-  return res.status(404).json({
-    error: "user not found"
-  });
-}
-if(name){
-  user.name = name;
-}
-if(email){
-  user.email = email;
-}
-return res.status(200).json(users);
-});
-
-app.delete('/user/:id', (req, res) => {
+export const updateArticleById = (req, res) => {
   const id = parseInt(req.params.id);
-  const user = user.find(user =>user.id === id);
-  if(!user){
-  return res.status(404).json({
-    error: "user not found"
-  });
+  const article = articles.find(a => a.id === id);
+  if(!article){
+    return res.status(404).json({
+      error:"cant find it"
+    });
+  }
+const{title, content, journalistId, categoryId} = req.body;
+if(title){
+ article.title = title;
 }
-if(name){
-  user.name = name;
+if(content){
+  article.content = content;
 }
-if(email){
-  user.email = email;
+if(journalistId){
+  article.journalistId = journalistId;
 }
-return res.status(204).json(users);
+if(categoryId){
+  article.categoryId = categoryId;
+}
+return res.status(200).json(article);
+}
 
-});
-export default ar
+export const deleteArticleById = (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = articles.findIndex(a => a.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({
+      error: "cant find it"
+    });
+  }
+
+  articles.splice(index, 1);
+  return res.status(204).send();
+}
